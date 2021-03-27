@@ -21,7 +21,7 @@ public class LandingPage {
 
                 String name = nameTextField.getText();
                 String socialMedia = socialMediaTextField.getText();
-                Player player = new Player(name, socialMedia);
+                PlayerData player = new PlayerData(name, socialMedia, 0);
                 // do later
 
                 //
