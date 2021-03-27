@@ -3,44 +3,47 @@ package friendsmakingapp.server;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.List;
 
-public class ServerThread extends Thread{
+public class ServerThread extends Thread {
 
-    private Socket socket;
+  public ObjectOutputStream output;
+  public PlayerData data;
+  private Socket socket;
+  private GameSession session;
+  private int index;
 
-    private GameSession session;
+  public ServerThread(Socket socket) {
+    this.socket = socket;
+  }
 
-    public ObjectOutputStream output;
+  public void joinSession(GameSession session, int index) {
+    this.session = session;
+    this.index = index;
+  }
 
-    public String OutputString = "";
+  @Override
+  public void run() {
+    try {
+      BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-    public ServerThread(Socket socket) {
-        this.socket = socket;
-    }
+      output = new ObjectOutputStream(socket.getOutputStream());
 
-    public void setSession(GameSession session) {
-        this.session = session;
-    }
-
-    @Override
-    public void run() {
-        try {
-            BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-            output = new ObjectOutputStream(socket.getOutputStream());
-
-            while (true){
-                String message = input.readLine();
-                session.addToChat(message);
-            }
-
-        } catch (Exception e){
-
+      while (true) {
+        String message = input.readLine();
+        if (session == null) {
+          String[] parts = message.split(";");
+          this.data.name = parts[0];
+          this.data.contactInfo = parts[1];
+        } else {
+          session.process(message, index);
         }
+      }
 
-        //super.run();
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+
+    // super.run();
+  }
 }

@@ -5,23 +5,22 @@ import java.util.LinkedList;
 
 public class GameStateUpdate implements Serializable {
 
-    LinkedList<String> chat;
-    String currentQuestion;
-    LinkedList<String> userNames;
-    String currentDrawer;
-    LinkedList<java.lang.Integer> scores;
-    LinkedList<String> contactInfo;
-    // boolean isDrawing;
+  LinkedList<String> chat;
+  String currentQuestion;
+  String currentDrawer;
+  LinkedList<PlayerData> players;
+  // boolean isDrawing;
 
-    // Picture Data;
+  // Picture Data;
 
-
-    public GameStateUpdate(LinkedList<String> chat, String currentQuestion, LinkedList<String> userNames, String currentDrawer, LinkedList<Integer> scores, LinkedList<String> contactInfo) {
-        this.chat = chat;
-        this.currentQuestion = currentQuestion;
-        this.userNames = userNames;
-        this.currentDrawer = currentDrawer;
-        this.scores = scores;
-        this.contactInfo = contactInfo;
-    }
+  public GameStateUpdate(
+      LinkedList<String> chat,
+      String currentQuestion,
+      String currentDrawer,
+      LinkedList<PlayerData> players) {
+    this.chat = chat;
+    this.currentQuestion = currentQuestion;
+    this.currentDrawer = currentDrawer;
+    this.players = players;
+  }
 }
