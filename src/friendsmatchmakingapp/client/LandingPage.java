@@ -1,17 +1,24 @@
 package friendsmatchmakingapp.client;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 
-public class LandingPage {
+public class LandingPage extends JPanel {
 
     private JTextField nameTextField;
     private JTextField socialMediaTextField;
     private JButton assignGameButton;
+    private ObjectOutputStream output;
+    private MainPanel mainPanel;
 
 
-    public LandingPage() {
+    public LandingPage(ObjectOutputStream output, MainPanel mainPanel) {
+        this.output = output;
+        this.mainPanel = mainPanel;
         assignGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -22,9 +29,12 @@ public class LandingPage {
                 String name = nameTextField.getText();
                 String socialMedia = socialMediaTextField.getText();
                 PlayerData player = new PlayerData(name, socialMedia, 0);
-                // do later
-
-                //
+                try {
+                    mainPanel.setName(name);
+                    output.writeObject(new PlayerUpdate(null, "", name, socialMedia, ""));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
 
 
             }

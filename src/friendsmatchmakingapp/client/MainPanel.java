@@ -11,13 +11,14 @@ import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MainPanel {
+public class MainPanel extends JFrame{
     private JPanel panel1;
     private JTextField redundant;
     private JTextField chatFieldTextField;
     private JLabel timerLabel;
     private JTable table1;
-
+    private String name;
+    private WhiteboardPanel whiteboardPanel;
 
     private List<PlayerData> participants;
     private int current;
@@ -28,24 +29,31 @@ public class MainPanel {
     private int interval;
     int delay = 1000;
     int period = 1000;
+    ObjectOutputStream output;
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public MainPanel() {
         this.participants = participants;
         current = 0;
+        whiteboardPanel = new WhiteboardPanel(output);
+        // attach whiteboardPanel as child of panel1
 
-        JFrame frame = new JFrame("App");
-        frame.setContentPane(new WhiteboardPanel());
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
 
-//        try (Socket socket = new Socket("localhost", 5000)){
-//            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
-//            ClientThread clientThread = new ClientThread(socket, this);
-//            clientThread.start();
-//        } catch (Exception e){
-//            System.out.println("Wumps :(, Something went wrong.");
-//        }
+
+        try (Socket socket = new Socket("localhost", 5000)){
+            output = new ObjectOutputStream(socket.getOutputStream());
+            ClientThread clientThread = new ClientThread(socket, this);
+            clientThread.start();
+            setContentPane(new LandingPage(output, this));
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            pack();
+            setVisible(true);
+        } catch (Exception e){
+            System.out.println("Wumps :(, Something went wrong.");
+        }
 
     }
 
@@ -92,6 +100,29 @@ public class MainPanel {
   }
 
     public void update(GameStateUpdate readObject) {
+        if (getContentPane() instanceof LandingPage) {
+            if (readObject.currentDrawer.equals(name)) {
+                setContentPane(new AnswerPrompt(output, readObject.currentQuestion));
+            }
+            else {
+                setContentPane(panel1);
+            }
+        }
+        else if (getContentPane() instanceof AnswerPrompt) {
+            setContentPane(panel1);
+        }
+        else if (getContentPane() == (panel1)) {
+
+            // update list of players
+            if (readObject.currentDrawer.equals(name)) {
+                whiteboardPanel.setDrawing(true);
+            }
+            else {
+                whiteboardPanel.setDrawing(false);
+                whiteboardPanel.drawLines(readObject.lines);
+            }
+        }
+
 
     }
 }
