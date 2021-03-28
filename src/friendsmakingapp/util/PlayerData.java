@@ -1,4 +1,4 @@
-package friendsmatchmakingapp.client;
+package friendsmakingapp.util;
 
 import java.io.Serializable;
 

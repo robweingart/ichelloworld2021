@@ -1,4 +1,6 @@
-package friendsmatchmakingapp.client;
+package friendsmakingapp.client;
+
+import friendsmakingapp.util.PlayerUpdate;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -20,6 +22,10 @@ public class AnswerPrompt extends JPanel {
     public AnswerPrompt(ObjectOutputStream output, String question) {
         this.output = output;
         this.question = question;
+
+        this.add(panel1);
+        this.revalidate();
+
         System.out.println(question);
         submitAnswerButton.addActionListener(new ActionListener() {
             @Override
@@ -30,6 +36,7 @@ public class AnswerPrompt extends JPanel {
 
                 String answer = textField1.getText();
                 try {
+                    System.out.println("Answer1");
                     output.writeObject(new PlayerUpdate(null, "", "", "", answer));
                 } catch (IOException ioException) {
                     ioException.printStackTrace();

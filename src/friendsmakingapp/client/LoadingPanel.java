@@ -1,4 +1,6 @@
-package friendsmatchmakingapp.client;
+package friendsmakingapp.client;
+
+import friendsmakingapp.util.PlayerData;
 
 import javax.swing.*;
 import java.util.ArrayList;
