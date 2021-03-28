@@ -26,6 +26,7 @@ public class MainPanel extends JFrame {
   private JTextField inputField;
   private JTextArea chatArea;
   private JButton chatButton;
+  private JLabel questionLabelAndCurrentDrawer;
   private String name;
   private WhiteboardPanel whiteboardPanel;
   private List<PlayerData> participants;
@@ -141,6 +142,7 @@ public class MainPanel extends JFrame {
         System.out.println("whiteboard created from answer prompt");
         whiteboardPanel.drawLines("");
         whiteboardPanel.setDrawing(true);
+        questionLabelAndCurrentDrawer.setText("Question: " + readObject.currentQuestion + "; Drawer: " + readObject.currentDrawer);
       }
 
     } else if (getContentPane() == (panel1)) {
@@ -166,7 +168,10 @@ public class MainPanel extends JFrame {
           System.out.println("can't draw");
           whiteboardPanel.drawLines(readObject.lines);
         }
+        questionLabelAndCurrentDrawer.setText("Question: " + readObject.currentQuestion + "; Drawer: " + readObject.currentDrawer);
+
       }
+
     }
     revalidate();
     repaint();

@@ -12,6 +12,7 @@ public class AnswerPrompt extends JPanel {
   private JPanel panel1;
   private JTextField textField1;
   private JButton submitAnswerButton;
+  private JLabel questionLabel;
   private ObjectOutputStream output;
   private String question;
 
@@ -26,6 +27,8 @@ public class AnswerPrompt extends JPanel {
 
     this.add(panel1);
     this.revalidate();
+
+    questionLabel.setText(question);
 
     System.out.println(question);
     submitAnswerButton.addActionListener(

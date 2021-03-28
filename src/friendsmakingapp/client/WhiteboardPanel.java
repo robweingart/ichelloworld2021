@@ -19,8 +19,8 @@ public class WhiteboardPanel extends JPanel {
 
   private LinkedList<LinkedList<Point>> lines = new LinkedList<>();
 
-  private Color color = Color.ORANGE;
-  private int thickness = 10;
+  private Color color = Color.BLACK;
+  private int thickness = 3;
   private ObjectOutputStream output;
   private Timer timer = new Timer();
   private int frequency = 500;
