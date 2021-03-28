@@ -1,17 +1,18 @@
 package friendsmakingapp.server;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
+import friendsmakingapp.util.PlayerData;
+import friendsmakingapp.util.PlayerUpdate;
+
+import java.io.*;
 import java.net.Socket;
 
 public class ServerThread extends Thread {
 
   public ObjectOutputStream output;
-  public PlayerData data;
   private Socket socket;
   private GameSession session;
   private int index;
+  public PlayerData data;
 
   public ServerThread(Socket socket) {
     this.socket = socket;
@@ -25,18 +26,18 @@ public class ServerThread extends Thread {
   @Override
   public void run() {
     try {
-      BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
 
       output = new ObjectOutputStream(socket.getOutputStream());
 
       while (true) {
-        String message = input.readLine();
+        PlayerUpdate update = (PlayerUpdate)input.readObject();
         if (session == null) {
-          String[] parts = message.split(";");
-          this.data.name = parts[0];
-          this.data.contactInfo = parts[1];
+
+          data = new PlayerData(update.username, update.social, 0);
+
         } else {
-          session.process(message, index);
+          session.process(update, index);
         }
       }
 

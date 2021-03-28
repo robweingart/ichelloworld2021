@@ -1,5 +1,9 @@
 package friendsmakingapp.server;
 
+import friendsmakingapp.util.GameStateUpdate;
+import friendsmakingapp.util.PlayerUpdate;
+
+import java.awt.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,8 +21,9 @@ public class GameSession {
   private String correctGuess;
   private String currentQuestion;
   private final Random random = new Random();
-  private SessionState state;
+  private SessionState state = SessionState.CHOOSING;
   private final Timer timer = new Timer();
+  private String lines = "";
 
   private LinkedList<String> chat = new LinkedList<>();
 
@@ -35,11 +40,13 @@ public class GameSession {
     updateStates();
   }
 
-  public synchronized void process(String message, int index) {
+  public synchronized void process(PlayerUpdate update, int index) {
     if (index == currentDrawer) {
       if (state == SessionState.CHOOSING) {
-        correctGuess = message;
+        correctGuess = update.correctAnswer;
         state = SessionState.DRAWING;
+        updateStates();
+        System.out.println("States");
         timer.schedule(new TimerTask() {
           @Override
           public void run() {
@@ -48,10 +55,12 @@ public class GameSession {
           }
         }, new Date(new Date().getTime() + 60000));
       } else {
-        // message is the encoded image data, process it here
+        lines = update.lines;
+        System.out.println(lines);
+        updateStates();
       }
     } else {
-      addToChat(message);
+      addToChat(update.message);
     }
   }
 
@@ -76,6 +85,7 @@ public class GameSession {
   public void nextPlayer() {
     currentDrawer = (currentDrawer + 1) % userThreads.length;
     state = SessionState.CHOOSING;
+    lines = "";
   }
 
   public void updateStates() {
@@ -88,7 +98,7 @@ public class GameSession {
             Arrays.stream(userThreads)
                 .map(t -> t.data)
                 .collect(Collectors.toCollection(LinkedList::new)),
-            state == SessionState.DRAWING);
+            state == SessionState.DRAWING, lines);
 
     for (ServerThread thread : userThreads) {
       try {

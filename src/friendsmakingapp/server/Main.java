@@ -9,7 +9,7 @@ import java.util.Queue;
 public class Main {
   // Players per Session = 4
 
-  private static final int PLAYERS = 1;
+  private static final int PLAYERS = 2;
 
   // Get a Queue of players trying to connect and create a session for the top 4 players (Create a
   // set number of Sessions?)
@@ -32,6 +32,8 @@ public class Main {
 
         if (clientQueue.size() >= PLAYERS) {
           System.out.println("A new challenger has appeared.");
+
+          Thread.sleep(1000);
 
           ServerThread[] threads = new ServerThread[PLAYERS];
 
