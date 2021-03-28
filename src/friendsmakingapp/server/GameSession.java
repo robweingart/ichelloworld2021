@@ -2,8 +2,6 @@ package friendsmakingapp.server;
 
 import friendsmakingapp.util.GameStateUpdate;
 import friendsmakingapp.util.PlayerUpdate;
-
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -17,12 +15,12 @@ public class GameSession {
   private static final String[] QUESTIONS = {"Hello", "Goodbye"};
   private static final int ROUNDS = 4;
   private final ServerThread[] userThreads;
+  private final Random random = new Random();
+  private final Timer timer = new Timer();
   private int currentDrawer;
   private String correctGuess;
   private String currentQuestion;
-  private final Random random = new Random();
   private SessionState state = SessionState.CHOOSING;
-  private final Timer timer = new Timer();
   private String lines = "";
 
   private String chat = "";
@@ -47,13 +45,15 @@ public class GameSession {
         state = SessionState.DRAWING;
         updateStates();
         System.out.println("States");
-        timer.schedule(new TimerTask() {
-          @Override
-          public void run() {
-            nextPlayer();
-            updateStates();
-          }
-        }, new Date(new Date().getTime() + 60000));
+        timer.schedule(
+            new TimerTask() {
+              @Override
+              public void run() {
+                nextPlayer();
+                updateStates();
+              }
+            },
+            new Date(new Date().getTime() + 60000));
       } else {
         lines = update.lines;
         updateStates();
@@ -70,10 +70,9 @@ public class GameSession {
     // Check if it's the guess.
 
     System.out.println(message);
-    if (message != ""){
-      chat+=(message+"\n");
+    if (message != "") {
+      chat += (message + "\n");
     }
-
 
     if (message.equalsIgnoreCase(correctGuess)) {
       userThreads[currentDrawer].data.score += 100;
@@ -99,7 +98,8 @@ public class GameSession {
             Arrays.stream(userThreads)
                 .map(t -> t.data)
                 .collect(Collectors.toCollection(LinkedList::new)),
-            state == SessionState.DRAWING, lines);
+            state == SessionState.DRAWING,
+            lines);
 
     for (ServerThread thread : userThreads) {
       try {
