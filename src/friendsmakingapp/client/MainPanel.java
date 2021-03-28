@@ -131,12 +131,15 @@ public class MainPanel extends JFrame {
         setContentPane(new AnswerPrompt(output, readObject.currentQuestion));
       } else {
         setContentPane(panel1);
+        System.out.println("whiteboard created from landing");
         createWhiteboard();
       }
     } else if (getContentPane() instanceof AnswerPrompt) {
       if (readObject.isDrawing) {
         setContentPane(panel1);
         createWhiteboard();
+        System.out.println("whiteboard created from answer prompt");
+        whiteboardPanel.drawLines("");
         whiteboardPanel.setDrawing(true);
       }
 
@@ -144,6 +147,7 @@ public class MainPanel extends JFrame {
 
       if (!readObject.isDrawing && readObject.currentDrawer.equals(name)) {
         setContentPane(new AnswerPrompt(output, readObject.currentQuestion));
+        System.out.println("not drawing");
       } else {
 
         chat = readObject.chat;
@@ -155,9 +159,11 @@ public class MainPanel extends JFrame {
         if (readObject.currentDrawer.equals(name)) {
           inputField.setEnabled(false);
           whiteboardPanel.setDrawing(true);
+          System.out.println("can draw");
         } else {
           inputField.setEnabled(true);
           whiteboardPanel.setDrawing(false);
+          System.out.println("can't draw");
           whiteboardPanel.drawLines(readObject.lines);
         }
       }
@@ -169,6 +175,9 @@ public class MainPanel extends JFrame {
   public void createWhiteboard() {
 
     System.out.println("Heya");
+    if (whiteboardPanel != null) {
+      whiteboardSpace.remove(whiteboardPanel);
+    }
     whiteboardPanel = new WhiteboardPanel(output);
     // attach whiteboardPanel as child of panel1
     whiteboardPanel.setBounds(0, 0, 1000, 1000);

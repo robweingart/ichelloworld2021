@@ -59,7 +59,7 @@ public class WhiteboardPanel extends JPanel {
         });
   }
 
-  public void mouseP(MouseEvent e) {
+  public synchronized void mouseP(MouseEvent e) {
     if (isDrawing) {
       LinkedList<Point> points = new LinkedList<>();
       points.add(e.getPoint());
@@ -67,22 +67,24 @@ public class WhiteboardPanel extends JPanel {
     }
   }
 
-  public void mouseR(MouseEvent e) {
+  public synchronized void mouseR(MouseEvent e) {
     if (isDrawing) {
       repaint();
     }
   }
 
-  public void mouseD(MouseEvent e) {
+  public synchronized void mouseD(MouseEvent e) {
     if (isDrawing) {
       lines.getLast().addLast(e.getPoint());
       repaint();
+      System.out.println("you're drawing!");
     }
   }
 
   public synchronized void changeData() {
     try {
       if (isDrawing) {
+        System.out.println("is drawing something");
         output.writeObject(new PlayerUpdate(convert(lines), "", "", "", ""));
       }
     } catch (IOException e) {
@@ -146,7 +148,7 @@ public class WhiteboardPanel extends JPanel {
     }
   }
 
-  public void setDrawing(boolean drawing) {
+  public synchronized void setDrawing(boolean drawing) {
     isDrawing = drawing;
   }
 
