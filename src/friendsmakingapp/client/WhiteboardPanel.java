@@ -33,13 +33,7 @@ public class WhiteboardPanel extends JPanel {
                 new TimerTask() {
                     @Override
                     public void run() {
-                        try {
-                            if (isDrawing) {
-                                output.writeObject(new PlayerUpdate(convert(lines), "", "", "", ""));
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        changeData();
                     }
                 },
                 0,
@@ -87,6 +81,16 @@ public class WhiteboardPanel extends JPanel {
         }
     }
 
+    public synchronized void changeData(){
+        try {
+            if (isDrawing) {
+                output.writeObject(new PlayerUpdate(convert(lines), "", "", "", ""));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String convert(LinkedList<LinkedList<Point>> input) {
 
         String output = input.stream()
@@ -113,7 +117,7 @@ public class WhiteboardPanel extends JPanel {
                 for (int points = 0; points < pointValues.length; points++) {
                     String[] splitPoint = pointValues[points].split(",");
                     p.add(new Point(Integer.parseInt(splitPoint[0]), Integer.parseInt(splitPoint[1])));
-                    System.out.println(splitPoint);
+
                 }
                 result.add(p);
             }
@@ -123,7 +127,7 @@ public class WhiteboardPanel extends JPanel {
     }
 
     @Override
-    public void paint(Graphics g) {
+    public synchronized void paint(Graphics g) {
         super.paint(g);
         this.setBackground(new Color(255, 255, 255));
 
