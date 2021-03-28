@@ -77,14 +77,12 @@ public class WhiteboardPanel extends JPanel {
     if (isDrawing) {
       lines.getLast().addLast(e.getPoint());
       repaint();
-      System.out.println("you're drawing!");
     }
   }
 
   public synchronized void changeData() {
     try {
       if (isDrawing) {
-        System.out.println("is drawing something");
         output.writeObject(new PlayerUpdate(convert(lines), "", "", "", ""));
       }
     } catch (IOException e) {

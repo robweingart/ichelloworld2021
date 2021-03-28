@@ -30,7 +30,6 @@ public class AnswerPrompt extends JPanel {
 
     questionLabel.setText(question);
 
-    System.out.println(question);
     submitAnswerButton.addActionListener(
         new ActionListener() {
           @Override
@@ -41,7 +40,6 @@ public class AnswerPrompt extends JPanel {
 
             String answer = textField1.getText();
             try {
-              System.out.println("Answer1");
               output.writeObject(new PlayerUpdate(null, "", "", "", answer));
             } catch (IOException ioException) {
               ioException.printStackTrace();

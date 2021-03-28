@@ -17,8 +17,6 @@ public class LandingPage extends JPanel {
   public LandingPage(MainPanel mainPanel) {
     this.mainPanel = mainPanel;
 
-    System.out.println("Im functional I swear!");
-
     this.add(landingPanel);
     this.revalidate();
 

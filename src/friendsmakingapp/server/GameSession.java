@@ -10,8 +10,27 @@ import java.util.TimerTask;
 
 public class GameSession {
 
-  private static final String[] QUESTIONS = {"Hello", "Goodbye"};
-  private static final int ROUNDS = 1;
+  private static final String[] QUESTIONS = {"What did you have for breakfast?",
+          "What is your favourite book?",
+          "What is your favourite colour?",
+          "What is your biggest fear?",
+          "What makes you laugh the most?",
+          "What was the last movie you went to?",
+          "What song did you last listen to?",
+          "What is your favourite song?",
+          "What is your favourite food?",
+          "What is your favourite animal?",
+          "What is your hobby?",
+          "What is the best gift you have given?",
+          "What is the worst gift you received?",
+          "What would you do if you won the lottery?",
+          "What type of music are you into?",
+          "What is your favourite way to spend a day off?",
+          "Which TV show would you recommend to people?",
+          "What is your pet peeve?",
+          "Do you prefer coffee or tea?",
+          "What is your favourite board game?"};
+  private static final int ROUNDS = 3;
   private final ServerThread[] userThreads;
   private final Random random = new Random();
   private final Timer timer = new Timer();
@@ -45,7 +64,6 @@ public class GameSession {
         correctGuess = update.correctAnswer;
         state = SessionState.DRAWING;
         updateStates();
-        System.out.println("States");
 
         isTimerRunning = true;
         task =
@@ -60,7 +78,6 @@ public class GameSession {
       } else {
         lines = update.lines;
         updateStates();
-        System.out.println(lines);
       }
     } else {
       addToChat(update.message, index);
@@ -73,7 +90,6 @@ public class GameSession {
 
     // Check if it's the guess.
 
-    System.out.println(message);
     if (message != "") {
       chat += (message + "\n");
     }

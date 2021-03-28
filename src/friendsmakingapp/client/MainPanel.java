@@ -35,10 +35,12 @@ public class MainPanel extends JFrame {
   private int currentRound;
   private Timer timer;
   private int interval;
+  private String URL;
 
-  public MainPanel() throws IOException {
+  public MainPanel(String url) throws IOException {
     this.participants = participants;
     current = 0;
+    this.URL = url;
 
     setContentPane(new LandingPage(this));
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +58,13 @@ public class MainPanel extends JFrame {
 
   public static void main(String[] args) {
     try {
-      MainPanel mainWindow = new MainPanel();
+      String URL;
+      if (args.length == 0){
+        URL = "localhost";
+      } else {
+        URL = args[0];
+      }
+      MainPanel mainWindow = new MainPanel(URL);
       mainWindow.setBounds(0, 0, 500, 300);
     } catch (IOException e) {
       e.printStackTrace();
@@ -70,7 +78,7 @@ public class MainPanel extends JFrame {
     try {
       if (output == null) {
 
-        Socket socket = new Socket("localhost", 5000);
+        Socket socket = new Socket(URL, 5000);
         output = new ObjectOutputStream(socket.getOutputStream());
         ClientThread clientThread = new ClientThread(socket, this);
         clientThread.start();
@@ -132,14 +140,12 @@ public class MainPanel extends JFrame {
         setContentPane(new AnswerPrompt(output, readObject.currentQuestion));
       } else {
         setContentPane(panel1);
-        System.out.println("whiteboard created from landing");
         createWhiteboard();
       }
     } else if (getContentPane() instanceof AnswerPrompt) {
       if (readObject.isDrawing) {
         setContentPane(panel1);
         createWhiteboard();
-        System.out.println("whiteboard created from answer prompt");
         whiteboardPanel.drawLines("");
         whiteboardPanel.setDrawing(true);
         questionLabelAndCurrentDrawer.setText("Question: " + readObject.currentQuestion + "; Drawer: " + readObject.currentDrawer);
@@ -149,7 +155,6 @@ public class MainPanel extends JFrame {
 
       if (!readObject.isDrawing && readObject.currentDrawer.equals(name)) {
         setContentPane(new AnswerPrompt(output, readObject.currentQuestion));
-        System.out.println("not drawing");
       } else {
 
         chat = readObject.chat;
@@ -161,11 +166,9 @@ public class MainPanel extends JFrame {
         if (readObject.currentDrawer.equals(name)) {
           inputField.setEnabled(false);
           whiteboardPanel.setDrawing(true);
-          System.out.println("can draw");
         } else {
           inputField.setEnabled(true);
           whiteboardPanel.setDrawing(false);
-          System.out.println("can't draw");
           whiteboardPanel.drawLines(readObject.lines);
         }
         questionLabelAndCurrentDrawer.setText("Question: " + readObject.currentQuestion + "; Drawer: " + readObject.currentDrawer);
@@ -179,7 +182,6 @@ public class MainPanel extends JFrame {
 
   public void createWhiteboard() {
 
-    System.out.println("Heya");
     if (whiteboardPanel != null) {
       whiteboardSpace.remove(whiteboardPanel);
     }
