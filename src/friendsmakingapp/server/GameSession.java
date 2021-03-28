@@ -2,18 +2,16 @@ package friendsmakingapp.server;
 
 import friendsmakingapp.util.GameStateUpdate;
 import friendsmakingapp.util.PlayerUpdate;
-import java.util.Arrays;
+
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.stream.Collectors;
 
 public class GameSession {
 
   private static final String[] QUESTIONS = {"Hello", "Goodbye"};
-  private static final int ROUNDS = 4;
+  private static final int ROUNDS = 1;
   private final ServerThread[] userThreads;
   private final Random random = new Random();
   private final Timer timer = new Timer();
@@ -24,7 +22,7 @@ public class GameSession {
   private String lines = "";
   private boolean isTimerRunning;
   private TimerTask task;
-
+  private int round;
 
   private String chat = "";
 
@@ -50,29 +48,28 @@ public class GameSession {
         System.out.println("States");
 
         isTimerRunning = true;
-        task = new TimerTask() {
-          @Override
-          public void run() {
-            nextPlayer();
-            updateStates();
-          }
-        };
-        timer.schedule(task
-            ,
-            new Date(new Date().getTime() + 60000));
+        task =
+            new TimerTask() {
+              @Override
+              public void run() {
+                nextPlayer();
+                updateStates();
+              }
+            };
+        timer.schedule(task, new Date(new Date().getTime() + 60000));
       } else {
         lines = update.lines;
         updateStates();
         System.out.println(lines);
       }
     } else {
-      addToChat(update.message);
+      addToChat(update.message, index);
     }
   }
 
   // Chat Related Functions
 
-  public void addToChat(String message) {
+  public void addToChat(String message, int index) {
 
     // Check if it's the guess.
 
@@ -82,7 +79,8 @@ public class GameSession {
     }
 
     if (message.equalsIgnoreCase(correctGuess)) {
-      userThreads[currentDrawer].data.score += 100;
+      userThreads[currentDrawer].data.score += 50;
+      userThreads[index].data.score += 100;
       nextPlayer();
     }
 
@@ -90,7 +88,23 @@ public class GameSession {
   }
 
   public void nextPlayer() {
-    currentDrawer = (currentDrawer + 1) % userThreads.length;
+    currentDrawer++;
+    if (currentDrawer == userThreads.length) {
+      round++;
+      currentDrawer = 0;
+      if (round == ROUNDS) {
+        // end of game
+        StringBuilder res = new StringBuilder();
+        res.append("Final results: ");
+        for (ServerThread user : userThreads) {
+          res.append(user.data.toString() + '\n');
+        }
+        res.append("Thanks for playing!");
+        chat += res;
+        task.cancel();
+        return;
+      }
+    }
     state = SessionState.CHOOSING;
     lines = "";
     if (task != null) {
@@ -105,9 +119,6 @@ public class GameSession {
             chat,
             currentQuestion,
             userThreads[currentDrawer].data.name,
-            Arrays.stream(userThreads)
-                .map(t -> t.data)
-                .collect(Collectors.toCollection(LinkedList::new)),
             state == SessionState.DRAWING,
             lines);
 
