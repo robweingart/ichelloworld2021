@@ -17,6 +17,7 @@ public class MainPanel extends JFrame{
     private JTextField chatFieldTextField;
     private JLabel timerLabel;
     private JTable table1;
+    private JPanel whiteboardSpace;
     private String name;
     private WhiteboardPanel whiteboardPanel;
 
@@ -40,7 +41,7 @@ public class MainPanel extends JFrame{
         current = 0;
         whiteboardPanel = new WhiteboardPanel(output);
         // attach whiteboardPanel as child of panel1
-
+        whiteboardSpace.add(whiteboardPanel);
 
 
         try (Socket socket = new Socket("localhost", 5000)){
