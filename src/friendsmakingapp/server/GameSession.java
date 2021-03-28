@@ -22,6 +22,9 @@ public class GameSession {
   private String currentQuestion;
   private SessionState state = SessionState.CHOOSING;
   private String lines = "";
+  private boolean isTimerRunning;
+  private TimerTask task;
+
 
   private String chat = "";
 
@@ -45,18 +48,22 @@ public class GameSession {
         state = SessionState.DRAWING;
         updateStates();
         System.out.println("States");
-        timer.schedule(
-            new TimerTask() {
-              @Override
-              public void run() {
-                nextPlayer();
-                updateStates();
-              }
-            },
+
+        isTimerRunning = true;
+        task = new TimerTask() {
+          @Override
+          public void run() {
+            nextPlayer();
+            updateStates();
+          }
+        };
+        timer.schedule(task
+            ,
             new Date(new Date().getTime() + 60000));
       } else {
         lines = update.lines;
         updateStates();
+        System.out.println(lines);
       }
     } else {
       addToChat(update.message);
@@ -86,6 +93,9 @@ public class GameSession {
     currentDrawer = (currentDrawer + 1) % userThreads.length;
     state = SessionState.CHOOSING;
     lines = "";
+    if (task != null) {
+      task.cancel();
+    }
   }
 
   public void updateStates() {
