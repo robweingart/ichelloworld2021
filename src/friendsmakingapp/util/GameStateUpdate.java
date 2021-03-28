@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 public class GameStateUpdate implements Serializable {
 
-    public LinkedList<String> chat;
+    public String chat;
     public String currentQuestion;
     public String currentDrawer;
     public LinkedList<PlayerData> players;
@@ -16,7 +16,7 @@ public class GameStateUpdate implements Serializable {
     // Picture Data;
 
     public GameStateUpdate(
-            LinkedList<String> chat,
+            String chat,
             String currentQuestion,
             String currentDrawer,
             LinkedList<PlayerData> players,

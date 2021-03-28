@@ -25,7 +25,7 @@ public class GameSession {
   private final Timer timer = new Timer();
   private String lines = "";
 
-  private LinkedList<String> chat = new LinkedList<>();
+  private String chat = "";
 
   public GameSession(ServerThread[] userThreads) {
     this.userThreads = userThreads;
@@ -56,7 +56,6 @@ public class GameSession {
         }, new Date(new Date().getTime() + 60000));
       } else {
         lines = update.lines;
-        System.out.println(lines);
         updateStates();
       }
     } else {
@@ -71,8 +70,10 @@ public class GameSession {
     // Check if it's the guess.
 
     System.out.println(message);
+    if (message != ""){
+      chat+=(message+"\n");
+    }
 
-    chat.add(message);
 
     if (message.equalsIgnoreCase(correctGuess)) {
       userThreads[currentDrawer].data.score += 100;
