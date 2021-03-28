@@ -1,8 +1,11 @@
 package friendsmakingapp.server;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 public class GameSession {
@@ -15,6 +18,7 @@ public class GameSession {
   private String currentQuestion;
   private final Random random = new Random();
   private SessionState state;
+  private final Timer timer = new Timer();
 
   private LinkedList<String> chat = new LinkedList<>();
 
@@ -36,6 +40,13 @@ public class GameSession {
       if (state == SessionState.CHOOSING) {
         correctGuess = message;
         state = SessionState.DRAWING;
+        timer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            nextPlayer();
+            updateStates();
+          }
+        }, new Date(new Date().getTime() + 60000));
       } else {
         // message is the encoded image data, process it here
       }
@@ -56,11 +67,15 @@ public class GameSession {
 
     if (message.equalsIgnoreCase(correctGuess)) {
       userThreads[currentDrawer].data.score += 100;
-      currentDrawer = (currentDrawer + 1) % userThreads.length;
-      state = SessionState.CHOOSING;
+      nextPlayer();
     }
 
     updateStates();
+  }
+
+  public void nextPlayer() {
+    currentDrawer = (currentDrawer + 1) % userThreads.length;
+    state = SessionState.CHOOSING;
   }
 
   public void updateStates() {
@@ -72,7 +87,8 @@ public class GameSession {
             userThreads[currentDrawer].data.name,
             Arrays.stream(userThreads)
                 .map(t -> t.data)
-                .collect(Collectors.toCollection(LinkedList::new)));
+                .collect(Collectors.toCollection(LinkedList::new)),
+            state == SessionState.DRAWING);
 
     for (ServerThread thread : userThreads) {
       try {

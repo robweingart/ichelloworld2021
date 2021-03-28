@@ -9,7 +9,7 @@ public class GameStateUpdate implements Serializable {
   String currentQuestion;
   String currentDrawer;
   LinkedList<PlayerData> players;
-  // boolean isDrawing;
+  boolean isDrawing;
 
   // Picture Data;
 
@@ -17,10 +17,12 @@ public class GameStateUpdate implements Serializable {
       LinkedList<String> chat,
       String currentQuestion,
       String currentDrawer,
-      LinkedList<PlayerData> players) {
+      LinkedList<PlayerData> players,
+      boolean isDrawing) {
     this.chat = chat;
     this.currentQuestion = currentQuestion;
     this.currentDrawer = currentDrawer;
     this.players = players;
+    this.isDrawing = isDrawing;
   }
 }
